@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export default {
   name: 'recipe',
   title: 'Recipe',
@@ -93,6 +94,12 @@ export default {
           }
         }
       ]
+    },
+    {
+      name: 'instructions',
+      title: 'Instructions',
+      type: 'array',
+      of: [{ type: 'block' }]
     }
   ]
 }
