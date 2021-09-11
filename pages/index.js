@@ -53,6 +53,6 @@ export async function getStaticProps() {
   const recipes = await sanityClient.fetch(recipesQuery)
 
   return {
-    props: { recipes }
+    props: { recipes }, revalidate: 20
   }
 }
