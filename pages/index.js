@@ -15,8 +15,6 @@ const recipesQuery = `*[_type == "recipe"]{
 
 export default function Home({ recipes }) {
 
-  console.log('Recipes: ', recipes)
-
   return (
     <div className={styles.container}>
       <Head>
@@ -31,7 +29,7 @@ export default function Home({ recipes }) {
         {recipes?.length !== 0 &&
           recipes.map(recipe => (
             <li key={recipe._id}>
-              <Link href="/">
+              <Link href={`/recipes/${recipe.slug.current}`}>
                 <a className="card">
                   <img src={urlFor(recipe.mainImage).url()} alt={recipe.name} style={{ width: '100%' }} />
                   <div className="container">
