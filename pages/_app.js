@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 import { Fragment } from 'react'
-import '../styles/globals.css'
+import '../styles/globals.scss'
 
 function MyApp({ Component, pageProps }) {
   return (

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { sanityClient, urlFor, usePreviewSubscription, PortableText } from '../../lib/sanity'
 
 
@@ -15,22 +15,39 @@ const recipeQuery = `*[_type == "recipe" && slug.current == $slug][0] {
       name
     }
   },
-  instructions
+  instructions,
+  likes
 }`
 
 const SingleRecipe = ({ data }) => {
+  const [likes, setLikes] = useState(data?.recipe?.likes)
+
+  const addLikes = async () => {
+    try {
+      const res = await fetch('/api/handle-likes', {
+        method: 'POST',
+        body: JSON.stringify({ _id: recipe.id })
+      })
+
+      const data = await res.json()
+      setLikes(data.likes)
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   const { recipe } = data
 
   return (
     <article className="recipe">
       <h1>{recipe?.name}</h1>
+      <button className="recipe__likes" onClick={addLikes}>{likes} {' '} ❤️</button>
       <main className="recipe__content">
-        <img src={urlFor(recipe?.mainImage).url()} alt={recipe?.name} width="380" height="600" />
-        <div className="recipe__breakdown">
-          <ul className="recipe__ingredients">
+        <img src={urlFor(recipe?.mainImage).url()} alt={recipe?.name} width="450" height="600" />
+        <div className="recipe__content--breakdown">
+          <ul className="recipe__content--ingredients">
             {
-              recipe.ingredient?.map(ingredient => <li className="recipe__ingredients--ingredient" key={ingredient.ingredient.name}>{ingredient.ingredient.name}
+              recipe.ingredient?.map(ingredient => <li className="recipe__content--ingredients--ingredient" key={ingredient.ingredient.name}>{ingredient.ingredient.name}
                 <br />
                 {ingredient.wholeNumber}
                 {ingredient.fraction}
@@ -39,11 +56,6 @@ const SingleRecipe = ({ data }) => {
               </li>)
             }
           </ul>
-          {/* <ul>
-            {
-              recipe.instructions?.map(instruction => <li key={instruction._key}>{instruction.children[0].text}</li>)
-            }
-          </ul> */}
           <PortableText blocks={recipe?.instructions} />
         </div>
       </main>
