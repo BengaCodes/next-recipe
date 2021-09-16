@@ -1,3 +1,4 @@
+import axios from 'axios'
 import React, { useState } from 'react'
 import { sanityClient, urlFor, usePreviewSubscription, PortableText } from '../../lib/sanity'
 
@@ -21,16 +22,12 @@ const recipeQuery = `*[_type == "recipe" && slug.current == $slug][0] {
 
 const SingleRecipe = ({ data }) => {
   const [likes, setLikes] = useState(data?.recipe?.likes)
+  
 
   const addLikes = async () => {
     try {
-      const res = await fetch('/api/handle-likes', {
-        method: 'POST',
-        body: JSON.stringify({ _id: recipe.id })
-      })
-
-      const data = await res.json()
-      setLikes(data.likes)
+      const res = await axios.post('/api/handle-likes', { _id: recipe._id })
+      setLikes(res.data.likes)
     } catch (err) {
       console.log(err)
     }
