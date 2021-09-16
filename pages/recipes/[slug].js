@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { useRouter } from 'next/dist/client/router'
 import React, { useState } from 'react'
 import { sanityClient, urlFor, usePreviewSubscription, PortableText } from '../../lib/sanity'
 
@@ -20,7 +21,17 @@ const recipeQuery = `*[_type == "recipe" && slug.current == $slug][0] {
   likes
 }`
 
-const SingleRecipe = ({ data }) => {
+const SingleRecipe = ({ data, preview }) => {
+  const router = useRouter()
+
+  if (router.isFallback) return <div>Loading.....</div>
+
+
+  const { data: recipe } = usePreviewSubscription(recipeQuery, {
+    params: { slug: data.recipe?.slug.current },
+    initialData: data,
+    enabled: preview
+  })
   const [likes, setLikes] = useState(data?.recipe?.likes)
   
 
@@ -32,8 +43,6 @@ const SingleRecipe = ({ data }) => {
       console.log(err)
     }
   }
-
-  const { recipe } = data
 
   return (
     <article className="recipe">
@@ -84,7 +93,7 @@ export async function getStaticProps({ params }) {
   const recipe = await sanityClient.fetch(recipeQuery, { slug })
 
   return {
-    props: { data: { recipe } }
+    props: { data: { recipe }, preview: true }
   }
 
 }
